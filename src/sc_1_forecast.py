@@ -24,16 +24,16 @@ class forecastingGoogle():
         self.model = None
         self.train_dt = None
         self.test_dt = None
-        self.graphs_show = True
+        self.graphs_show = False
 
     def pre_pro(self):
 
         df = self.df
 
-        # Takinh the propriete column names
+        # Taking the correct column names
 
         # Rename the columns
-        self.data_clean = df.reset_index().rename(columns={'index': 'week', 'Category: All categories': 'score'})
+        self.data_clean = df.reset_index().rename(columns={'Unnamed: 0': 'week', 'Category: All categories': 'score'})
 
         # Remove the header row
         self.data_clean = self.data_clean.iloc[1:len(self.data_clean)]
@@ -47,9 +47,6 @@ class forecastingGoogle():
         self.data_clean['day'] = self.data_clean['week'].dt.day
 
         self.data_clean = self.data_clean[['week', 'year', 'month', 'day', 'score']]
-
-        print('*** Preprocessing ***\n\nOur Clean Data are:\n')
-        print(self.data_clean.head(5))
 
         return self.data_clean
 
@@ -90,14 +87,14 @@ class forecastingGoogle():
         if self.graphs_show:
             fig_timeseries.show()
 
-        return fig_timeseries, fig_avg_year, fig_avg_month
+        return fig_avg_year, fig_avg_month, fig_timeseries
 
-    def train_sarimax_model(self):
+    def train_sarimax_model(self,step):
 
         # Adfuller metric to find best design
         def adfuler_mets(time_series):
 
-            print('Results of Dickey-Fuller Test:')
+            # print('Results of Dickey-Fuller Test:')
             dftest = adfuller(time_series, autolag='AIC')
             dfoutput = pd.Series(dftest[0:4],
                                  index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
@@ -105,7 +102,7 @@ class forecastingGoogle():
             for key, value in dftest[4].items():
                 dfoutput['Critical Value (%s)' % key] = value
 
-            print('*** Adfuller:\n', dfoutput)
+            # print('*** Adfuller:\n', dfoutput)
 
         adfuler_mets(self.data_clean['score'])  # .diff().dropna().diff().dropna()
 
@@ -122,7 +119,7 @@ class forecastingGoogle():
 
         # Prepare Arima Model
         my_order = (2, 1, 0)
-        my_seasonal_order = (0, 1, 0, 54)
+        my_seasonal_order = (0, 1, 0, step)
         model = SARIMAX(train_data.score, order=my_order, seasonal_order=my_seasonal_order)
 
         # fit the model
@@ -179,13 +176,15 @@ class forecastingGoogle():
         return fig_res, fig_residual
 
 
-if __name__ == "__main__":
-    df = pd.read_csv('data/sun.csv')
-
-    a = forecastingGoogle(df)
-
-    a.pre_pro()
-
-    a.graphs_gen()
-
-    a.train_sarimax_model()
+# if __name__ == "__main__":
+#
+#
+#     df = pd.read_csv('data/sun.csv')
+#
+#     a = forecastingGoogle(df)
+#
+#     a.pre_pro()
+#
+#     a.graphs_gen()
+#
+#     a.train_sarimax_model()
