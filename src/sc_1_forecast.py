@@ -7,6 +7,8 @@ from datetime import date
 
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
+from pmdarima import auto_arima
+
 import statsmodels.api as sm
 
 import plotly.graph_objects as go
@@ -117,9 +119,27 @@ class forecastingGoogle():
         test_data = self.data_clean.tail(ts_te)
         self.test_dt = test_data
 
+
+        # Sarimax_model = auto_arima(train_data.score,
+        #                            start_p=0,
+        #                            start_q=0,
+        #                            max_p=3,
+        #                            max_q=3,
+        #                            m=12,
+        #                            test='adf',
+        #                            seasonal=True,
+        #                            d=1,
+        #                            D=1,
+        #                            trace=True,
+        #                            error_action='ignore',
+        #                            suppress_warnings=True,
+        #                            stepwise=True)
+        #
+        # print(Sarimax_model.summary())
+
         # Prepare Arima Model
         my_order = (2, 1, 0)
-        my_seasonal_order = (0, 1, 0, step)
+        my_seasonal_order = (2, 1, 0, step)
         model = SARIMAX(train_data.score, order=my_order, seasonal_order=my_seasonal_order)
 
         # fit the model
@@ -176,15 +196,15 @@ class forecastingGoogle():
         return fig_res, fig_residual
 
 
-# if __name__ == "__main__":
-#
-#
-#     df = pd.read_csv('data/sun.csv')
-#
-#     a = forecastingGoogle(df)
-#
-#     a.pre_pro()
-#
-#     a.graphs_gen()
-#
-#     a.train_sarimax_model()
+if __name__ == "__main__":
+
+
+    df = pd.read_csv('data/sun.csv')
+
+    a = forecastingGoogle(df)
+
+    a.pre_pro()
+
+    a.graphs_gen()
+
+    a.train_sarimax_model(54)

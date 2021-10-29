@@ -15,8 +15,17 @@ from dash.exceptions import PreventUpdate
 import os
 
 from sc_1_forecast import forecastingGoogle
+import socket
+
+
+
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], title='Forecasting')
+
+# # In the case that I want to run the application to all my localnetwork
+# super_ip = socket.gethostbyname(socket.gethostname())
+# server = app.server
+
 
 app.layout = html.Div(id='king-container', children=[
 
@@ -156,8 +165,6 @@ app.layout = html.Div(id='king-container', children=[
 def updateGraphs1(file_selected,n_clicks,step):
     if n_clicks == 0 or file_selected == None:
 
-        print('file selcted is:',file_selected)
-
         raise PreventUpdate
 
     elif n_clicks !=0 and file_selected != None and step != None:
@@ -248,3 +255,7 @@ def upload_csv_to_server(content, filename, n_clicks):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+    # # In the case that I want to run the application to all my localnetwork
+    # server.run(debug=True, host=super_ip, port='666')
+
