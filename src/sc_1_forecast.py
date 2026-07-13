@@ -59,7 +59,7 @@ class forecastingGoogle():
         y = m_dt
         fig_avg_month = go.Figure(data=[go.Bar(
             y=y,
-            x=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Dec'],
+            x=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct','Nov','Dec'],
             text=y,
             textposition='auto',
         )])
